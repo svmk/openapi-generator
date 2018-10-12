@@ -55,6 +55,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.openapitools.codegen.CodegenDiscriminator.MappedModel;
 import org.openapitools.codegen.examples.ExampleGenerator;
 import org.openapitools.codegen.serializer.SerializerUtils;
+import org.openapitools.codegen.utils.CompositeSchemaMapper;
 import org.openapitools.codegen.utils.ModelUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1672,6 +1673,11 @@ public class DefaultCodegen implements CodegenConfig {
                 postProcessModelProperty(m, prop);
             }
         }
+        CompositeSchemaMapper compositeSchemaMapper = new CompositeSchemaMapper(this);
+        if (schema instanceof ComposedSchema) {
+            compositeSchemaMapper.setValues(m, (ComposedSchema) schema, allDefinitions);
+        }
+        compositeSchemaMapper.setProperties(m.getName(), m.getAllVars(), schema, allDefinitions);
         LOGGER.debug("debugging fromModel return: " + m);
 
         return m;

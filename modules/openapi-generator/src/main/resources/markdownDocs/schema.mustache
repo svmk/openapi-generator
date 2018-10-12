@@ -1,0 +1,74 @@
+{{ description }}
+
+{{#hasVars}}
+## Properties
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+{{#vars}}
+| [{{baseName}}](#property-{{baseName}}) | {{> model_type }} | {{#required}}`yes`{{/required}}{{^required}}`no`{{/required}} | {{description}} |
+{{/vars}}
+
+{{#vars}}
+# Property {{baseName}}
+|  |  |
+|--|--|
+| **Name** | {{ baseName }} |
+| **Type** | {{> model_type }} |
+{{#isEnum}}
+| **Enum** | `{{_enum}}` |
+{{/isEnum}}
+| **Required** | {{#required}}`yes`{{/required}}{{^required}}`no`{{/required}} |
+{{#defaultValue}}| **Default value** | `{{defaultValue}}` |{{/defaultValue}}
+{{#discriminatorValue}}| **Discriminator** | `{{discriminatorValue}}` |{{/discriminatorValue}}
+
+{{#description}}{{description}}{{/description}}
+
+{{#hasValidation}}
+
+## Property requirements
+{{#minimum}}* `value >{{^exclusiveMinimum}}={{/exclusiveMinimum}} {{minimum}}`{{/minimum}}
+{{#maximum}}* `value <{{^exclusiveMaximum}}={{/exclusiveMaximum}} {{maximum}}`{{/maximum}}
+{{#pattern}}* `regexp: {{pattern}}`{{/pattern}}
+{{#minLength}}* `length >= {{minLength}}`{{/minLength}}
+{{#maxLength}}* `length <= {{maxLength}}`{{/maxLength}}
+{{#minItems}}* `min items count: {{minItems}}`{{/minItems}}
+{{#maxItems}}* `max items count: {{maxItems}}`{{/maxItems}}
+{{/hasValidation}}
+{{#hasAllOf}}
+
+## All of these schemas
+{{#allOf}}
+<details>
+<p>
+{{#name}}<summary><b>{{name}}</b></summary>{{/name}}
+{{> schema }}
+</p>
+</details>
+{{/allOf}}
+{{/hasAllOf}}
+{{#hasOneOf}}
+
+## One of these schemas
+{{#oneOf}}
+<details>
+<p>
+{{#name}}<summary><b>{{name}}</b></summary>{{/name}}
+{{> schema }}
+</p>
+</details>
+{{/oneOf}}
+{{/hasOneOf}}
+{{#hasAnyOf}}
+
+## Any of these schemas
+{{#anyOf}}
+<details>
+<p>
+{{#name}}<summary><b>{{name}}</b></summary>{{/name}}
+{{> schema }}
+</p>
+</details>
+{{/anyOf}}
+{{/hasAnyOf}}
+{{/vars}}
+{{/hasVars}}

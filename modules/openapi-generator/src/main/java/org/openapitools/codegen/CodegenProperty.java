@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class CodegenProperty implements Cloneable {
+public class CodegenProperty implements Cloneable, CodegenComposed {
     public String baseName, complexType, getter, setter, description, dataType,
           datatypeWithEnum, dataFormat, name, min, max, defaultValue, defaultValueWithParam,
           baseType, containerType, title;
@@ -56,7 +56,7 @@ public class CodegenProperty implements Cloneable {
     public boolean hasMore, required, secondaryParam;
     public boolean hasMoreNonReadOnly; // for model constructor, true if next property is not readonly
     public boolean isPrimitiveType, isContainer, isNotContainer;
-    public boolean isString, isNumeric, isInteger, isLong, isNumber, isFloat, isDouble, isByteArray, isBinary, isFile, isBoolean, isDate, isDateTime, isUuid;
+    public boolean isString, isNumeric, isInteger, isLong, isNumber, isFloat, isDouble, isByteArray, isBinary, isFile, isBoolean, isDate, isDateTime, isUuid, hasAllOf, hasOneOf, hasAnyOf;
     public boolean isListContainer, isMapContainer;
     public boolean isEnum;
     public boolean isReadOnly;
@@ -83,6 +83,10 @@ public class CodegenProperty implements Cloneable {
     public String xmlName;
     public String xmlNamespace;
     public boolean isXmlWrapped = false;
+
+    public List<CodegenModel> allOf = new ArrayList();
+    public List<CodegenModel> anyOf = new ArrayList();
+    public List<CodegenModel> oneOf = new ArrayList();
 
         public String getBaseName() {
         return baseName;
@@ -410,6 +414,42 @@ public class CodegenProperty implements Cloneable {
         this.xmlNamespace = xmlNamespace;
     }
 
+    public List<CodegenModel> getAllOf() { return allOf; }
+
+    public boolean isHasAllOf() {
+        return this.hasAllOf;
+    }
+
+    public void setHasAllOf(boolean hasAllOf) {
+        this.hasAllOf = hasAllOf;
+    }
+
+    public void setAllOf(List<CodegenModel> allOf) { this.allOf = allOf; }
+
+    public List<CodegenModel> getAnyOf() { return anyOf; }
+
+    public boolean isHasAnyOf() {
+        return this.hasAnyOf;
+    }
+
+    public void setHasAnyOf(boolean hasAnyOf) {
+        this.hasAnyOf = hasAnyOf;
+    }
+
+    public void setAnyOf(List<CodegenModel> anyOf) { this.anyOf = anyOf; }
+
+    public List<CodegenModel> getOneOf() { return this.oneOf; }
+
+    public boolean isHasOneOf() {
+        return this.hasOneOf;
+    }
+
+    public void setHasOneOf(boolean hasOneOf) {
+        this.hasOneOf = hasOneOf;
+    }
+
+    public void setOneOf(List<CodegenModel> oneOf) { this.oneOf = oneOf; }
+
     @Override
     public int hashCode()
     {
@@ -486,6 +526,9 @@ public class CodegenProperty implements Cloneable {
         result = prime * result + ((xmlName == null) ? 0 : xmlName.hashCode());
         result = prime * result + ((xmlNamespace == null) ? 0 : xmlNamespace.hashCode());
         result = prime * result + ((isXmlWrapped  ? 13:31));
+        result = prime * result + Objects.hashCode(allOf);
+        result = prime * result + Objects.hashCode(oneOf);
+        result = prime * result + Objects.hashCode(anyOf);
         return result;
     }
 
@@ -695,6 +738,15 @@ public class CodegenProperty implements Cloneable {
             return false;
         }
         if (!Objects.equals(this.isXmlWrapped, other.isXmlWrapped)) {
+            return false;
+        }
+        if (this.allOf != other.allOf) {
+            return false;
+        }
+        if (this.oneOf != other.oneOf) {
+            return false;
+        }
+        if (this.anyOf != other.anyOf) {
             return false;
         }
         return true;

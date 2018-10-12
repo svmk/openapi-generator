@@ -1,0 +1,27 @@
+# {{ appName }}
+|  |  |
+|--|--|
+| Version | {{version}} |
+| Description | {{appDescription}} |
+
+{{#apiInfo}}
+## Operations
+| Route | Description |
+|-------|-------------|
+{{#apis}}
+{{#operations}}
+{{#operation}}
+| [{{httpMethod}} {{path}}](./operations/{{classname}}.md) | {{ summary }} |
+{{/operation}}
+{{/operations}}
+{{/apis}}
+
+## Models
+| Type | Description |
+|------|-------------|
+{{#models}}
+{{#model}}
+| [{{classname}}](./models/{{classname}}.md) | {{ description }} |
+{{/model}}
+{{/models}}
+{{/apiInfo}}

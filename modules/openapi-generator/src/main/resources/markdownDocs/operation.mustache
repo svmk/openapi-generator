@@ -1,0 +1,27 @@
+{{#operations}}
+{{#operation}}
+## {{httpMethod}} {{path}}
+{{description}}
+{{#notes}}
+* {{notes}}
+{{/notes}}
+{{#hasParams}}
+### Request
+
+| Type | Name | Type | Required | Description |
+|------|------|------|----------|-------------|
+{{#allParams}}
+| {{#isFormParam}}Form{{/isFormParam}}{{#isQueryParam}}Query{{/isQueryParam}}{{#isPathParam}}Path{{/isPathParam}}{{#isHeaderParam}}Header{{/isHeaderParam}}{{#isBodyParam}}Body{{/isBodyParam}} | {{baseName}} | {{> operation_type }} |{{^optional}}`Yes`{{/optional}}{{#optional}}`No`{{/optional}}| {{description}} |
+{{/allParams}}
+{{/hasParams}}
+
+### Response
+
+| Code | Type | Description |
+|------|------|-------------|
+{{#responses}}
+| {{code}} | {{> operation_type }} | {{ message }} |
+{{/responses}}
+
+{{/operation}}
+{{/operations}}

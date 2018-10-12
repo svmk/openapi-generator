@@ -31,7 +31,7 @@ import java.util.TreeSet;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties({"parentModel", "interfaceModels"})
-public class CodegenModel {
+public class CodegenModel implements CodegenComposed {
     public String parent, parentSchema;
     public List<String> interfaces;
 
@@ -62,11 +62,15 @@ public class CodegenModel {
     public Set<String> allMandatory;
 
     public Set<String> imports = new TreeSet<String>();
-    public boolean hasVars, emptyVars, hasMoreModels, hasEnums, isEnum, hasRequired, hasOptional, isArrayModel, hasChildren, isMapModel;
+    public boolean hasVars, emptyVars, hasMoreModels, hasEnums, isEnum, hasRequired, hasOptional, isArrayModel, hasChildren, isMapModel, hasAllOf, hasOneOf, hasAnyOf;
     public boolean hasOnlyReadOnly = true; // true if all properties are read-only
     public ExternalDocumentation externalDocumentation;
 
     public Map<String, Object> vendorExtensions = new HashMap<String, Object>();
+
+    public List<CodegenModel> allOf = new ArrayList();
+    public List<CodegenModel> anyOf = new ArrayList();
+    public List<CodegenModel> oneOf = new ArrayList();
 
     //The type of the value from additional properties. Used in map like objects.
     public String additionalPropertiesType;
@@ -162,6 +166,15 @@ public class CodegenModel {
             return false;
         if (!Objects.equals(parentVars, that.parentVars))
             return false;
+        if (this.allOf != that.allOf) {
+            return false;
+        }
+        if (this.oneOf != that.oneOf) {
+            return false;
+        }
+        if (this.anyOf != that.anyOf) {
+            return false;
+        }
         return vendorExtensions != null ? vendorExtensions.equals(that.vendorExtensions) : that.vendorExtensions == null;
 
     }
@@ -205,6 +218,9 @@ public class CodegenModel {
         result = 31 * result + Objects.hash(hasOnlyReadOnly);
         result = 31 * result + Objects.hash(hasChildren);
         result = 31 * result + Objects.hash(parentVars);
+        result = 31 * result + Objects.hash(allOf);
+        result = 31 * result + Objects.hash(oneOf);
+        result = 31 * result + Objects.hash(anyOf);
         return result;
     }
 
@@ -490,6 +506,46 @@ public class CodegenModel {
 
     public void setVendorExtensions(Map<String, Object> vendorExtensions) {
         this.vendorExtensions = vendorExtensions;
+    }
+
+    public List<CodegenModel> getAllOf() { return allOf; }
+
+    public boolean isHasAllOf() {
+        return hasAllOf;
+    }
+
+    public void setHasAllOf(boolean hasAllOf) {
+        this.hasAllOf = hasAllOf;
+    }
+
+    public void setAllOf(List<CodegenModel> allOf) { this.allOf = allOf; }
+
+    public List<CodegenModel> getAnyOf() { return anyOf; }
+
+    public boolean isHasAnyOf() {
+        return hasAnyOf;
+    }
+
+    public void setHasAnyOf(boolean hasAnyOf) {
+        this.hasAnyOf = hasAnyOf;
+    }
+
+    public void setAnyOf(List<CodegenModel> anyOf) { this.anyOf = anyOf; }
+
+    public List<CodegenModel> getOneOf() {
+        return oneOf;
+    }
+
+    public boolean isHasOneOf() {
+        return hasOneOf;
+    }
+
+    public void setHasOneOf(boolean hasOneOf) {
+        this.hasOneOf = hasOneOf;
+    }
+
+    public void setOneOf(List<CodegenModel> oneOf) {
+        this.oneOf = oneOf;
     }
 
     public String getAdditionalPropertiesType() {
