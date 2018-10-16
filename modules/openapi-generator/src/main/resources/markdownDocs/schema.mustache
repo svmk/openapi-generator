@@ -9,7 +9,7 @@
 {{/vars}}
 
 {{#vars}}
-# Property {{baseName}}
+### Property {{baseName}}
 |  |  |
 |--|--|
 | **Name** | {{ baseName }} |
@@ -25,7 +25,7 @@
 
 {{#hasValidation}}
 
-## Property requirements
+#### Property requirements
 {{#minimum}}* `value >{{^exclusiveMinimum}}={{/exclusiveMinimum}} {{minimum}}`{{/minimum}}
 {{#maximum}}* `value <{{^exclusiveMaximum}}={{/exclusiveMaximum}} {{maximum}}`{{/maximum}}
 {{#pattern}}* `regexp: {{pattern}}`{{/pattern}}

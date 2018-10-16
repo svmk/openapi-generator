@@ -11,7 +11,7 @@
 {{#apis}}
 {{#operations}}
 {{#operation}}
-| [{{httpMethod}} {{path}}](./operations/{{classname}}.md) | {{ summary }} |
+| [{{httpMethod}} {{path}}]({{markdownBasePath}}operations/{{classname}}.md) | {{ summary }} |
 {{/operation}}
 {{/operations}}
 {{/apis}}
@@ -21,7 +21,7 @@
 |------|-------------|
 {{#models}}
 {{#model}}
-| [{{classname}}](./models/{{classname}}.md) | {{ description }} |
+| [{{classname}}]({{markdownBasePath}}models/{{classname}}.md) | {{ description }} |
 {{/model}}
 {{/models}}
 {{/apiInfo}}
