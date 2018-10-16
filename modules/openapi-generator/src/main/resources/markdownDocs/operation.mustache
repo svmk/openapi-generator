@@ -2,14 +2,15 @@
 {{#operation}}
 ## {{httpMethod}} {{path}}
 {{description}}
+{{summary}}
 {{#notes}}
 * {{notes}}
 {{/notes}}
 {{#hasParams}}
 ### Request
 
-| Type | Name | Type | Required | Description |
-|------|------|------|----------|-------------|
+| Parameter type | Name | Data type | Required | Description |
+|----------------|------|-----------|----------|-------------|
 {{#allParams}}
 | {{#isFormParam}}Form{{/isFormParam}}{{#isQueryParam}}Query{{/isQueryParam}}{{#isPathParam}}Path{{/isPathParam}}{{#isHeaderParam}}Header{{/isHeaderParam}}{{#isBodyParam}}Body{{/isBodyParam}} | {{baseName}} | {{> operation_type }} |{{^optional}}`Yes`{{/optional}}{{#optional}}`No`{{/optional}}| {{description}} |
 {{/allParams}}

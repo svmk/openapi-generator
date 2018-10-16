@@ -72,7 +72,7 @@ public class StaticMarkdownGenerator extends DefaultCodegen implements CodegenCo
     @Override
     public CodegenProperty fromProperty(String name, Schema p) {
         CodegenProperty result = super.fromProperty(name, p);
-        if (!result.isPrimitiveType && !result.isNotContainer) {
+        if (!result.isPrimitiveType && result.isNotContainer) {
             result.vendorExtensions.put("resolvedModelName", result.complexType);
         }
         return result;
