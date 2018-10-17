@@ -100,6 +100,7 @@ public class DefaultCodegen implements CodegenConfig {
     protected String modelNamePrefix = "", modelNameSuffix = "";
     protected String testPackage = "";
     protected Map<String, String> apiTemplateFiles = new HashMap<String, String>();
+    protected Map<String, String> apiOperationTemplateFiles = new HashMap<String, String>();
     protected Map<String, String> modelTemplateFiles = new HashMap<String, String>();
     protected Map<String, String> apiTestTemplateFiles = new HashMap<String, String>();
     protected Map<String, String> modelTestTemplateFiles = new HashMap<String, String>();
@@ -579,11 +580,17 @@ public class DefaultCodegen implements CodegenConfig {
         return apiTemplateFiles;
     }
 
+    public Map<String, String> apiOperationTemplateFiles() { return apiOperationTemplateFiles; }
+
     public Map<String, String> modelTemplateFiles() {
         return modelTemplateFiles;
     }
 
     public String apiFileFolder() {
+        return outputFolder + "/" + apiPackage().replace('.', '/');
+    }
+
+    public String apiOperationFileFolder() {
         return outputFolder + "/" + apiPackage().replace('.', '/');
     }
 
@@ -3517,6 +3524,11 @@ public class DefaultCodegen implements CodegenConfig {
     public String apiFilename(String templateName, String tag) {
         String suffix = apiTemplateFiles().get(templateName);
         return apiFileFolder() + File.separator + toApiFilename(tag) + suffix;
+    }
+
+    public String apiOperationFilename(String templateName, String tag, CodegenOperation operation) {
+        String suffix = apiOperationTemplateFiles().get(templateName);
+        return apiOperationFileFolder() + File.separator + toApiFilename(tag) + File.separator + operation.nickname + suffix;
     }
 
     /**

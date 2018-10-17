@@ -39,9 +39,19 @@ public class StaticMarkdownGenerator extends DefaultCodegen implements CodegenCo
         super();
         embeddedTemplateDir = templateDir = "markdownDocs";
         modelTemplateFiles.put("model.mustache", ".md");
-        apiTemplateFiles.put("operation.mustache", ".md");
+        apiOperationTemplateFiles.put("operation.mustache", ".md");
         supportingFiles.add(new SupportingFile("README.mustache", "", "README.md"));
         cliOptions.add(new CliOption("markdownBasePath", "base path to markdown root"));
+        cliOptions.add(new CliOption("tocFileName", "Enables sidebar file that contains table of content"));
+    }
+
+    @Override
+    public void processOpts() {
+        super.processOpts();
+        String tocFileName = (String) additionalProperties.get("tocFileName");
+        if (tocFileName != null) {
+            supportingFiles.add(new SupportingFile("toc.mustache", "", tocFileName));
+        }
     }
 
     @Override
@@ -60,7 +70,7 @@ public class StaticMarkdownGenerator extends DefaultCodegen implements CodegenCo
     }
 
     @Override
-    public String apiFileFolder() {
+    public String apiOperationFileFolder() {
         return outputFolder + File.separator + File.separator + "operations";
     }
 

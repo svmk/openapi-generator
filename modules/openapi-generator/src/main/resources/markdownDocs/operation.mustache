@@ -12,7 +12,7 @@
 | Parameter type | Name | Data type | Required | Description |
 |----------------|------|-----------|----------|-------------|
 {{#allParams}}
-| {{#isFormParam}}Form{{/isFormParam}}{{#isQueryParam}}Query{{/isQueryParam}}{{#isPathParam}}Path{{/isPathParam}}{{#isHeaderParam}}Header{{/isHeaderParam}}{{#isBodyParam}}Body{{/isBodyParam}} | {{baseName}} | {{> operation_type }} |{{^optional}}`Yes`{{/optional}}{{#optional}}`No`{{/optional}}| {{description}} |
+| {{#isFormParam}}Form{{/isFormParam}}{{#isQueryParam}}Query{{/isQueryParam}}{{#isPathParam}}Path{{/isPathParam}}{{#isHeaderParam}}Header{{/isHeaderParam}}{{#isBodyParam}}Body{{/isBodyParam}} | {{baseName}} | {{> _operation_type }} |{{^optional}}`Yes`{{/optional}}{{#optional}}`No`{{/optional}}| {{description}} |
 {{/allParams}}
 {{/hasParams}}
 
@@ -21,7 +21,7 @@
 | Code | Type | Description |
 |------|------|-------------|
 {{#responses}}
-| {{code}} | {{> operation_type }} | {{ message }} |
+| {{code}} | {{> _operation_type }} | {{ message }} |
 {{/responses}}
 
 {{/operation}}

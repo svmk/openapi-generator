@@ -48,6 +48,8 @@ public interface CodegenConfig {
 
     String apiFileFolder();
 
+    String apiOperationFileFolder();
+
     String apiTestFileFolder();
 
     String apiDocFileFolder();
@@ -130,6 +132,8 @@ public interface CodegenConfig {
 
     Map<String, String> apiTemplateFiles();
 
+    Map<String, String> apiOperationTemplateFiles();
+
     Map<String, String> modelTemplateFiles();
 
     Map<String, String> apiTestTemplateFiles();
@@ -191,6 +195,8 @@ public interface CodegenConfig {
     void postProcessParameter(CodegenParameter parameter);
 
     String apiFilename(String templateName, String tag);
+
+    String apiOperationFilename(String templateName, String tag, CodegenOperation operation);
 
     String apiTestFilename(String templateName, String tag);
 

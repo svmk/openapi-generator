@@ -128,14 +128,14 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
     }
 
     private void configureGeneratorProperties() {
-        // allows generating only models by specifying a CSV of models to generate, or empty for all
+        // allows generating only models by specifying a CSV of models to generateOperationsForTag, or empty for all
         // NOTE: Boolean.TRUE is required below rather than `true` because of JVM boxing constraints and type inference.
         generateApis = System.getProperty(CodegenConstants.APIS) != null ? Boolean.TRUE : getGeneratorPropertyDefaultSwitch(CodegenConstants.APIS, null);
         generateModels = System.getProperty(CodegenConstants.MODELS) != null ? Boolean.TRUE : getGeneratorPropertyDefaultSwitch(CodegenConstants.MODELS, null);
         generateSupportingFiles = System.getProperty(CodegenConstants.SUPPORTING_FILES) != null ? Boolean.TRUE : getGeneratorPropertyDefaultSwitch(CodegenConstants.SUPPORTING_FILES, null);
 
         if (generateApis == null && generateModels == null && generateSupportingFiles == null) {
-            // no specifics are set, generate everything
+            // no specifics are set, generateOperationsForTag everything
             generateApis = generateModels = generateSupportingFiles = true;
         } else {
             if (generateApis == null) {
@@ -148,7 +148,7 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
                 generateSupportingFiles = false;
             }
         }
-        // model/api tests and documentation options rely on parent generate options (api or model) and no other options.
+        // model/api tests and documentation options rely on parent generateOperationsForTag options (api or model) and no other options.
         // They default to true in all scenarios and can only be marked false explicitly
         generateModelTests = System.getProperty(CodegenConstants.MODEL_TESTS) != null ? Boolean.valueOf(System.getProperty(CodegenConstants.MODEL_TESTS)) : getGeneratorPropertyDefaultSwitch(CodegenConstants.MODEL_TESTS, true);
         generateModelDocumentation = System.getProperty(CodegenConstants.MODEL_DOCS) != null ? Boolean.valueOf(System.getProperty(CodegenConstants.MODEL_DOCS)) : getGeneratorPropertyDefaultSwitch(CodegenConstants.MODEL_DOCS, true);
@@ -261,7 +261,7 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
     }
 
     private void generateModelTests(List<File> files, Map<String, Object> models, String modelName) throws IOException {
-        // to generate model test files
+        // to generateOperationsForTag model test files
         for (String templateName : config.modelTestTemplateFiles().keySet()) {
             String suffix = config.modelTestTemplateFiles().get(templateName);
             String filename = config.modelTestFileFolder() + File.separator + config.toModelTestFilename(modelName) + suffix;
@@ -401,16 +401,16 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
         // process models only
         for (String name : modelKeys) {
             try {
-                //don't generate models that have an import mapping
+                //don't generateOperationsForTag models that have an import mapping
                 if (config.importMapping().containsKey(name)) {
                     LOGGER.debug("Model " + name + " not imported due to import mapping");
                     continue;
                 }
 
-                // don't generate models that are not used as object (e.g. form parameters)
+                // don't generateOperationsForTag models that are not used as object (e.g. form parameters)
                 if (unusedModels.contains(name)) {
                     if (Boolean.FALSE.equals(skipFormModel)) {
-                        // if skipFormModel sets to true, still generate the model and log the result
+                        // if skipFormModel sets to true, still generateOperationsForTag the model and log the result
                         LOGGER.info("Model " + name + " (marked as unused due to form parameters) is generated due to skipFormModel=false (default)");
                     } else {
                         LOGGER.info("Model " + name + " not generated since it's marked as unused (due to form parameters) and skipFormModel set to true");
@@ -433,12 +433,12 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
         // post process all processed models
         allProcessedModels = config.postProcessAllModels(allProcessedModels);
 
-        // generate files based on processed models
+        // generateOperationsForTag files based on processed models
         for (String modelName : allProcessedModels.keySet()) {
             Map<String, Object> models = (Map<String, Object>) allProcessedModels.get(modelName);
             models.put("modelPackage", config.modelPackage());
             try {
-                //don't generate models that have an import mapping
+                //don't generateOperationsForTag models that have an import mapping
                 if (config.importMapping().containsKey(modelName)) {
                     continue;
                 }
@@ -454,19 +454,19 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
 
                 allModels.add(modelTemplate);
 
-                // to generate model files
+                // to generateOperationsForTag model files
                 generateModel(files, models, modelName);
 
                 if (generateModelTests) {
-                    // to generate model test files
+                    // to generateOperationsForTag model test files
                     generateModelTests(files, models, modelName);
                 }
                 if (generateModelDocumentation) {
-                    // to generate model documentation files
+                    // to generateOperationsForTag model documentation files
                     generateModelDocumentation(files, models, modelName);
                 }
             } catch (Exception e) {
-                throw new RuntimeException("Could not generate model '" + modelName + "'", e);
+                throw new RuntimeException("Could not generateOperationsForTag model '" + modelName + "'", e);
             }
         }
         if (System.getProperty("debugModels") != null) {
@@ -506,34 +506,6 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
                 });
                 Map<String, Object> operation = processOperations(config, tag, ops, allModels);
 
-                operation.put("basePath", basePath);
-                operation.put("basePathWithoutHost", basePathWithoutHost);
-                operation.put("contextPath", contextPath);
-                operation.put("baseName", tag);
-                operation.put("apiPackage", config.apiPackage());
-                operation.put("modelPackage", config.modelPackage());
-                operation.putAll(config.additionalProperties());
-                operation.put("classname", config.toApiName(tag));
-                operation.put("classVarName", config.toApiVarName(tag));
-                operation.put("importPath", config.toApiImport(tag));
-                operation.put("classFilename", config.toApiFilename(tag));
-
-                if (!config.vendorExtensions().isEmpty()) {
-                    operation.put("vendorExtensions", config.vendorExtensions());
-                }
-
-                // Pass sortParamsByRequiredFlag through to the Mustache template...
-                boolean sortParamsByRequiredFlag = true;
-                if (this.config.additionalProperties().containsKey(CodegenConstants.SORT_PARAMS_BY_REQUIRED_FLAG)) {
-                    sortParamsByRequiredFlag = Boolean.valueOf(this.config.additionalProperties().get(CodegenConstants.SORT_PARAMS_BY_REQUIRED_FLAG).toString());
-                }
-                operation.put("sortParamsByRequiredFlag", sortParamsByRequiredFlag);
-
-                /* consumes, produces are no longer defined in OAS3.0
-                processMimeTypes(swagger.getConsumes(), operation, "consumes");
-                processMimeTypes(swagger.getProduces(), operation, "produces");
-                */
-
                 allOperations.add(new HashMap<String, Object>(operation));
                 for (int i = 0; i < allOperations.size(); i++) {
                     Map<String, Object> oo = (Map<String, Object>) allOperations.get(i);
@@ -556,8 +528,12 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
                     }
                 }
 
+                generateOperationsForTag(paths, tag, allModels);
+
+
+
                 if (generateApiTests) {
-                    // to generate api test files
+                    // to generateOperationsForTag api test files
                     for (String templateName : config.apiTestTemplateFiles().keySet()) {
                         String filename = config.apiTestFilename(templateName, tag);
                         // do not overwrite test file that already exists
@@ -576,7 +552,7 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
 
 
                 if (generateApiDocumentation) {
-                    // to generate api documentation files
+                    // to generateOperationsForTag api documentation files
                     for (String templateName : config.apiDocTemplateFiles().keySet()) {
                         String filename = config.apiDocFilename(templateName, tag);
                         if (!config.shouldOverwrite(filename) && new File(filename).exists()) {
@@ -593,7 +569,7 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
                 }
 
             } catch (Exception e) {
-                throw new RuntimeException("Could not generate api file for '" + tag + "'", e);
+                throw new RuntimeException("Could not generateOperationsForTag api file for '" + tag + "'", e);
             }
         }
         if (System.getProperty("debugOperations") != null) {
@@ -601,6 +577,30 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
             Json.prettyPrint(allOperations);
         }
 
+    }
+
+    private List<File> generateOperationsForTag(Map<String, List<CodegenOperation>> paths, String tag, List<Object> allModels) throws IOException {
+        ArrayList<File> files = new ArrayList();
+        // to generateOperationsForTag api files that separated by operations
+        for (String templateName: config.apiOperationTemplateFiles().keySet()) {
+            for (CodegenOperation operation: paths.get(tag)) {
+                ArrayList<CodegenOperation> singleOperation = new ArrayList();
+                singleOperation.add(operation);
+                Map<String, Object> templateOperationParameters = processOperations(config, tag, singleOperation, allModels);
+                String filename = config.apiOperationFilename(templateName, tag, operation);
+                if (!config.shouldOverwrite(filename) && new File(filename).exists()) {
+                    LOGGER.info("Skipped overwriting " + filename);
+                    continue;
+                }
+
+                File written = processTemplateToFile(templateOperationParameters, templateName, filename);
+                if (written != null) {
+                    files.add(written);
+                    config.postProcessFile(written, "api");
+                }
+            }
+        }
+        return files;
     }
 
     private void generateSupportingFiles(List<File> files, Map<String, Object> bundle) {
@@ -680,7 +680,7 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
                     LOGGER.info("Skipped generation of " + outputFilename + " due to rule in .openapi-generator-ignore");
                 }
             } catch (Exception e) {
-                throw new RuntimeException("Could not generate supporting file '" + support + "'", e);
+                throw new RuntimeException("Could not generateOperationsForTag supporting file '" + support + "'", e);
             }
         }
 
@@ -695,7 +695,7 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
             try {
                 writeToFile(ignoreFileNameTarget, ignoreFileContents);
             } catch (IOException e) {
-                throw new RuntimeException("Could not generate supporting file '" + openapiGeneratorIgnore + "'", e);
+                throw new RuntimeException("Could not generateOperationsForTag supporting file '" + openapiGeneratorIgnore + "'", e);
             }
             files.add(ignoreFile);
             config.postProcessFile(ignoreFile, "openapi-generator-ignore");
@@ -709,7 +709,7 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
                 files.add(versionMetadataFile);
                 config.postProcessFile(ignoreFile, "openapi-generator-version");
             } catch (IOException e) {
-                throw new RuntimeException("Could not generate supporting file '" + versionMetadata + "'", e);
+                throw new RuntimeException("Could not generateOperationsForTag supporting file '" + versionMetadata + "'", e);
             }
         }
 
@@ -726,7 +726,7 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
         try {
             writeToFile(licenseFileNameTarget, licenseFileContents);
         } catch (IOException e) {
-            throw new RuntimeException("Could not generate LICENSE file '" + apache2License + "'", e);
+            throw new RuntimeException("Could not generateOperationsForTag LICENSE file '" + apache2License + "'", e);
         }
         files.add(licenseFile);
          */
@@ -1043,6 +1043,34 @@ public class DefaultGenerator extends AbstractGenerator implements Generator {
                 op.hasMore = false;
             }
         }
+
+        operations.put("basePath", basePath);
+        operations.put("basePathWithoutHost", basePathWithoutHost);
+        operations.put("contextPath", contextPath);
+        operations.put("baseName", tag);
+        operations.put("apiPackage", config.apiPackage());
+        operations.put("modelPackage", config.modelPackage());
+        operations.putAll(config.additionalProperties());
+        operations.put("classname", config.toApiName(tag));
+        operations.put("classVarName", config.toApiVarName(tag));
+        operations.put("importPath", config.toApiImport(tag));
+        operations.put("classFilename", config.toApiFilename(tag));
+
+        if (!config.vendorExtensions().isEmpty()) {
+            operations.put("vendorExtensions", config.vendorExtensions());
+        }
+
+        // Pass sortParamsByRequiredFlag through to the Mustache template...
+        boolean sortParamsByRequiredFlag = true;
+        if (this.config.additionalProperties().containsKey(CodegenConstants.SORT_PARAMS_BY_REQUIRED_FLAG)) {
+            sortParamsByRequiredFlag = Boolean.valueOf(this.config.additionalProperties().get(CodegenConstants.SORT_PARAMS_BY_REQUIRED_FLAG).toString());
+        }
+        operations.put("sortParamsByRequiredFlag", sortParamsByRequiredFlag);
+
+        /* consumes, produces are no longer defined in OAS3.0
+        processMimeTypes(swagger.getConsumes(), operation, "consumes");
+        processMimeTypes(swagger.getProduces(), operation, "produces");
+        */
         return operations;
     }
 

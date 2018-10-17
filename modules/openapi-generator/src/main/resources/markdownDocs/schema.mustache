@@ -5,24 +5,23 @@
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 {{#vars}}
-| [{{baseName}}](#property-{{baseName}}) | {{> model_type }} | {{#required}}`yes`{{/required}}{{^required}}`no`{{/required}} | {{description}} |
+| [{{baseName}}](#property-{{baseName}}) | {{> _model_type }} | {{#required}}`yes`{{/required}}{{^required}}`no`{{/required}} | {{description}} |
 {{/vars}}
 
 {{#vars}}
 ### Property {{baseName}}
+{{#description}}{{description}}{{/description}}
+
 |  |  |
 |--|--|
 | **Name** | {{ baseName }} |
-| **Type** | {{> model_type }} |
+| **Type** | {{> _model_type }} |
 {{#isEnum}}
 | **Enum** | `{{_enum}}` |
 {{/isEnum}}
 | **Required** | {{#required}}`yes`{{/required}}{{^required}}`no`{{/required}} |
 {{#defaultValue}}| **Default value** | `{{defaultValue}}` |{{/defaultValue}}
 {{#discriminatorValue}}| **Discriminator** | `{{discriminatorValue}}` |{{/discriminatorValue}}
-
-{{#description}}{{description}}{{/description}}
-
 {{#hasValidation}}
 
 #### Property requirements
